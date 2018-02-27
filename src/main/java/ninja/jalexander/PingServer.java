@@ -9,15 +9,13 @@ public class PingServer extends Thread {
 		while (true) {
 		    byte[] receiveData = new byte[10];
 		    byte[] sendData = new byte[1];
+		    String ret = "b";
+		    sendData = ret.getBytes();
 		    while(true) {
 			DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 			serverSocket.receive(receivePacket);
-			InetAddress IPAddress = receivePacket.getAddress();
-			int port = receivePacket.getPort();
-			String ret = "b";
-			sendData = ret.getBytes();
 			DatagramPacket sendPacket =
-			    new DatagramPacket(sendData, sendData.length, IPAddress, port);
+			    new DatagramPacket(sendData, sendData.length, receivePacket.getAddress(), receivePacket.getPort());
 			serverSocket.send(sendPacket);
 		    }
 		}
