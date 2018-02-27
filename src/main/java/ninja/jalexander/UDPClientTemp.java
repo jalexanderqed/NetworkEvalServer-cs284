@@ -2,7 +2,6 @@
 
 import java.io.*;
 import java.net.*;
-//import javafx.scene.image.ImageView;
 
 class UDPClient {
     public static void main(String args[]) throws Exception {

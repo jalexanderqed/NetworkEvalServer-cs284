@@ -4,24 +4,9 @@ import java.io.*;
 import java.net.*;
 
 public class TCPServer extends Thread {
-    private final static String fileToSend = "runescape.png";
-
     public void run() {
-        ClassLoader classLoader = getClass().getClassLoader();
-        File inFile = new File(classLoader.getResource(fileToSend).getFile());
-        System.out.println("TCP Server Running with file of size " + inFile.length());
-        byte[] myByteArray = new byte[(int) inFile.length()];
-
-        try (
-                FileInputStream fis = new FileInputStream(inFile);
-                BufferedInputStream bis = new BufferedInputStream(fis);
-        ) {
-            bis.read(myByteArray, 0, myByteArray.length);
-        } catch (IOException ex) {
-            System.err.println("Could not read image file");
-            System.err.println(ex.getMessage());
-        }
-
+        byte[] myByteArray = Util.loadImageFile();
+        System.out.println("TCP Server Running with file of size " + myByteArray.length);
 
         try (ServerSocket welcomeSocket = new ServerSocket(6789)) {
             while (true) {
