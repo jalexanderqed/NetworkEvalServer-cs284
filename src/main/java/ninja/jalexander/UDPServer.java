@@ -42,7 +42,7 @@ public class UDPServer extends Thread {
                     DatagramPacket sendPacket =
                             new DatagramPacket(bytesChunked[i], bytesChunked[i].length, IPAddress, port);
                     serverSocket.send(sendPacket);
-                    //Util.wait(1);
+                    Util.wait(1);
                 }
 
                 for(int i = 0; i < retryCount; i++){
