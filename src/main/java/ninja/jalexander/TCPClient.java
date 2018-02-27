@@ -1,20 +1,51 @@
-package main.java.ninja.jalexander;
 
 import java.io.*;
+import java.io.ByteArrayOutputStream;
 import java.net.*;
 
 class TCPClient {
-    public static void main(String argv[]) throws Exception {
-        String sentence;
-        String modifiedSentence;
-        BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
-        Socket clientSocket = new Socket("localhost", 6789);
-        DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-        BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        sentence = inFromUser.readLine();
-        outToServer.writeBytes(sentence + '\n');
-        modifiedSentence = inFromServer.readLine();
-        System.out.println("FROM SERVER: " + modifiedSentence);
-        clientSocket.close();
+
+    private final static String serverIP = "127.0.0.1";
+    private final static int serverPort = 6789;
+    private final static String fileOutput = "tcpCatReceived.jpg";
+
+    public static void main(String args[]) {
+        byte[] aByte = new byte[1];
+        int bytesRead;
+
+        Socket clientSocket = null;
+        InputStream is = null;
+
+        try {
+            clientSocket = new Socket( serverIP , serverPort );
+            is = clientSocket.getInputStream();
+        } catch (IOException ex) {
+            // Do exception handling
+        }
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        if (is != null) {
+
+            FileOutputStream fos = null;
+            BufferedOutputStream bos = null;
+            try {
+                fos = new FileOutputStream( fileOutput );
+                bos = new BufferedOutputStream(fos);
+                bytesRead = is.read(aByte, 0, aByte.length);
+
+                do {
+                        baos.write(aByte);
+                        bytesRead = is.read(aByte);
+                } while (bytesRead != -1);
+
+                bos.write(baos.toByteArray());
+                bos.flush();
+                bos.close();
+                clientSocket.close();
+            } catch (IOException ex) {
+                // Do exception handling
+            }
+        }
     }
 }
