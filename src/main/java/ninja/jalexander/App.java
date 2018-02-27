@@ -19,8 +19,11 @@ public class App {
         tcpServer.start();
         UDPServer udpServer = new UDPServer();
         udpServer.start();
+	PingServer pingServer = new PingServer();
+	pingServer.start();
 
         port(8080);
+	
         get("/hello", (req, res) -> "Hello World");
 
         post("/data", (req, res) -> {
@@ -38,6 +41,7 @@ public class App {
 
             res.status(201);
             return "";
-        });
+	
+	    });
     }
 }
