@@ -32,14 +32,13 @@ public class UDPServer extends Thread {
                 serverSocket.receive(receivePacket);
                 byte[] receivePacketData = receivePacket.getData();
                 String sentence = new String(receivePacketData);
-                System.out.println("RECEIVED: " + sentence);
-                System.out.println("Size: " + receivePacket.getLength());
+                System.out.println("Received UDP request");
 
                 InetAddress IPAddress = receivePacket.getAddress();
                 int port = receivePacket.getPort();
 
                 for(int i = 0; i < bytesChunked.length; i++) {
-                    Util.wait(20);
+                    Util.wait(25);
                     DatagramPacket sendPacket =
                             new DatagramPacket(bytesChunked[i], bytesChunked[i].length, IPAddress, port);
                     serverSocket.send(sendPacket);
