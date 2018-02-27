@@ -5,8 +5,10 @@ import java.net.*;
 
 public class UDPServer extends Thread {
     public void run() {
-        try {
-            DatagramSocket serverSocket = new DatagramSocket(9876);
+        byte[] myByteArray = Util.loadImageFile();
+        System.out.println("UDP Server Running with file of size " + myByteArray.length);
+
+        try(DatagramSocket serverSocket = new DatagramSocket(9876)){
             byte[] receiveData = new byte[1024];
             byte[] sendData = new byte[1024];
             while (true) {
@@ -23,7 +25,8 @@ public class UDPServer extends Thread {
                 serverSocket.send(sendPacket);
             }
         } catch (Exception e) {
-            //well uh hmmm
+            System.err.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 }

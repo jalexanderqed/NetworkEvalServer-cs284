@@ -22,7 +22,7 @@ public class Util {
             System.err.println("Could not read image file");
             System.err.println(ex.getMessage());
         }
-        
+
         return myByteArray;
     }
 }
