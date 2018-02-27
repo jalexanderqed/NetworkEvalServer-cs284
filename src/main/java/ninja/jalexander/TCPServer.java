@@ -2,11 +2,11 @@
 import java.io.*;
 import java.net.*;
 
-class TCPServer {
+public class TCPServer extends Thread {
 
     private final static String fileToSend = "tcpCat.jpg";
 
-    public static void main(String args[]) {
+    public void run() {
 
 	File myFile = new File( fileToSend );
 	byte[] mybytearray = new byte[(int) myFile.length()];
