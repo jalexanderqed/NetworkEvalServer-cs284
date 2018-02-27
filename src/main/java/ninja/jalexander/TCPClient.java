@@ -9,45 +9,41 @@ class TCPClient {
 
     private final static String serverIP = "127.0.0.1";
     private final static int serverPort = 6789;
-    private final static String fileOutput = Paths.get(System.getProperty("user.home"),"Desktop", "run.png").toString();
+    private final static String fileOutput = Paths.get(System.getProperty("user.home"), "Desktop", "run.png").toString();
 
     public static void main(String args[]) {
-        byte[] aByte = new byte[1];
+        byte[] inBuff = new byte[64000];
         int bytesRead;
+        int bytesReceived = 0;
 
-        Socket clientSocket = null;
-        InputStream is = null;
+        boolean started = false;
+        long startTime = 0;
+        long endTime = 0;
 
-        try {
-            clientSocket = new Socket(serverIP, serverPort);
-            is = clientSocket.getInputStream();
+        try (
+                Socket clientSocket = new Socket(serverIP, serverPort);
+                InputStream in = clientSocket.getInputStream();
+        ) {
+            do {
+                if(!started){
+                    started = true;
+                    startTime = System.nanoTime();
+                }
+
+                bytesRead = in.read(inBuff, 0, inBuff.length);
+                bytesReceived += bytesRead;
+            } while (bytesRead != -1);
         } catch (IOException ex) {
-            // Do exception handling
+            System.err.println(ex.getMessage());
+            ex.printStackTrace();
         }
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        if(started) endTime = System.nanoTime();
 
-        if (is != null) {
-
-            FileOutputStream fos = null;
-            BufferedOutputStream bos = null;
-            try {
-                fos = new FileOutputStream(fileOutput);
-                bos = new BufferedOutputStream(fos);
-                bytesRead = is.read(aByte, 0, aByte.length);
-
-                do {
-                    baos.write(aByte);
-                    bytesRead = is.read(aByte);
-                } while (bytesRead != -1);
-
-                bos.write(baos.toByteArray());
-                bos.flush();
-                bos.close();
-                clientSocket.close();
-            } catch (IOException ex) {
-                // Do exception handling
-            }
-        }
+        long nanoDiff = endTime - startTime;
+        double bRate = ((double)bytesReceived) / (nanoDiff * 1e-9);
+        
+        System.out.println("Bytes Received: " + bytesReceived);
+        System.out.println("Byte Rate: " + (Math.round(10 * bRate / 1e6) / 10.0) + "MB/s");
     }
 }

@@ -8,7 +8,8 @@ class UDPClient {
 
     public static void main(String[] args) {
         try(DatagramSocket clientSocket = new DatagramSocket()) {
-            InetAddress IPAddress = InetAddress.getByName("localhost");
+            InetAddress IPAddress = InetAddress.getByName("cs.jalexander.ninja");
+            //InetAddress IPAddress = InetAddress.getByName("localhost");
             String sentence = "Gimme dem kitties";
             byte[] sendData = sentence.getBytes();
 
@@ -27,12 +28,14 @@ class UDPClient {
 
             while (receiving) {
                 byte[] receiveData = new byte[64000];
-                DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-                clientSocket.receive(receivePacket);
+
                 if(!started){
                     started = true;
                     startTime = System.nanoTime();
                 }
+
+                DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                clientSocket.receive(receivePacket);
 
                 packetsReceived++;
                 bytesReceived += receivePacket.getLength();
@@ -52,7 +55,7 @@ class UDPClient {
 
             System.out.println("Packets Received: " + packetsReceived);
             System.out.println("Bytes Received: " + bytesReceived);
-            System.out.println("Byte Rate: " + Math.round(bRate / 1e6) + "MB/s");
+            System.out.println("Byte Rate: " + (Math.round(10 * bRate / 1e6) / 10.0) + "MB/s");
             System.out.println("Packet Rate: " + Math.round(pRate) + "p/s");
         } catch(IOException e){
             System.err.println(e.getMessage());
