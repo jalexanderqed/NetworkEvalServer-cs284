@@ -25,4 +25,11 @@ public class Util {
 
         return myByteArray;
     }
+
+    public static boolean bytesEqual(byte[] a, byte[] b, int length){
+        for(int i = 0; i < length; i++){
+            if(a[i] != b[i]) return false;
+        }
+        return true;
+    }
 }
