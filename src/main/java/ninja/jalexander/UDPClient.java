@@ -1,4 +1,4 @@
-//package main.java.ninja.jalexander;
+package main.java.ninja.jalexander;
 
 import java.io.*;
 import java.net.*;

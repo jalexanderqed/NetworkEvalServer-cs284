@@ -3,12 +3,13 @@ package main.java.ninja.jalexander;
 import java.io.*;
 import java.io.ByteArrayOutputStream;
 import java.net.*;
+import java.nio.file.Paths;
 
 class TCPClient {
 
     private final static String serverIP = "127.0.0.1";
     private final static int serverPort = 6789;
-    private final static String fileOutput = "tcpCatReceived.jpg";
+    private final static String fileOutput = Paths.get(System.getProperty("user.home"),"Desktop", "run.png").toString();
 
     public static void main(String args[]) {
         byte[] aByte = new byte[1];
@@ -18,7 +19,7 @@ class TCPClient {
         InputStream is = null;
 
         try {
-            clientSocket = new Socket( serverIP , serverPort );
+            clientSocket = new Socket(serverIP, serverPort);
             is = clientSocket.getInputStream();
         } catch (IOException ex) {
             // Do exception handling
@@ -31,13 +32,13 @@ class TCPClient {
             FileOutputStream fos = null;
             BufferedOutputStream bos = null;
             try {
-                fos = new FileOutputStream( fileOutput );
+                fos = new FileOutputStream(fileOutput);
                 bos = new BufferedOutputStream(fos);
                 bytesRead = is.read(aByte, 0, aByte.length);
 
                 do {
-                        baos.write(aByte);
-                        bytesRead = is.read(aByte);
+                    baos.write(aByte);
+                    bytesRead = is.read(aByte);
                 } while (bytesRead != -1);
 
                 bos.write(baos.toByteArray());
