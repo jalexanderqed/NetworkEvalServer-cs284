@@ -3,11 +3,10 @@ package main.java.ninja.jalexander;
 import java.io.*;
 import java.net.*;
 
-public class TCPServer {
-
+public class TCPServer extends Thread {
     private final static String fileToSend = "runescape.png";
 
-    public static void main(String args[]) {
+    public void run() {
 
         File myFile = new File(fileToSend);
         byte[] myByteArray = new byte[(int) myFile.length()];
