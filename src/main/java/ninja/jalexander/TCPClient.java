@@ -1,3 +1,4 @@
+package main.java.ninja.jalexander;
 
 import java.io.*;
 import java.io.ByteArrayOutputStream;
