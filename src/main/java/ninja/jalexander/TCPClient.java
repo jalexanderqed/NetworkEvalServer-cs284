@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 
 class TCPClient {
 
-    private final static String serverIP = "127.0.0.1";
+    private final static String serverIP = "cs.jalexander.ninja";
     private final static int serverPort = 6789;
     private final static String fileOutput = Paths.get(System.getProperty("user.home"), "Desktop", "run.png").toString();
 
@@ -42,7 +42,7 @@ class TCPClient {
 
         long nanoDiff = endTime - startTime;
         double bRate = ((double)bytesReceived) / (nanoDiff * 1e-9);
-        
+
         System.out.println("Bytes Received: " + bytesReceived);
         System.out.println("Byte Rate: " + (Math.round(10 * bRate / 1e6) / 10.0) + "MB/s");
     }

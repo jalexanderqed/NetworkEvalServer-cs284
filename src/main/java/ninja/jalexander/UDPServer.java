@@ -31,7 +31,6 @@ public class UDPServer extends Thread {
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
                 serverSocket.receive(receivePacket);
                 byte[] receivePacketData = receivePacket.getData();
-                String sentence = new String(receivePacketData);
                 System.out.println("Received UDP request");
 
                 InetAddress IPAddress = receivePacket.getAddress();

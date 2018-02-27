@@ -11,6 +11,7 @@ public class TCPServer extends Thread {
         try (ServerSocket welcomeSocket = new ServerSocket(6789)) {
             while (true) {
                 Socket connectionSocket = welcomeSocket.accept();
+                System.out.println("Received TCP request");
                 BufferedOutputStream outToClient = new BufferedOutputStream(connectionSocket.getOutputStream());
 
                 if (outToClient != null) {
