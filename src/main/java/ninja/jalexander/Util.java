@@ -4,13 +4,13 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Path;
 
 public class Util {
     private final static String largeFile = "runescape.png";
 
-    public static byte[] loadImageFile(){
-        ClassLoader classLoader = Util.class.getClassLoader();
-        File inFile = new File(classLoader.getResource(largeFile).getFile());
+    public static byte[] loadImageFile() {
+        File inFile = getFileFor(largeFile);
         byte[] myByteArray = new byte[(int) inFile.length()];
 
         try (
@@ -26,10 +26,22 @@ public class Util {
         return myByteArray;
     }
 
-    public static boolean bytesEqual(byte[] a, byte[] b, int length){
-        for(int i = 0; i < length; i++){
-            if(a[i] != b[i]) return false;
+    public static File getFileFor(String file) {
+        ClassLoader classLoader = Util.class.getClassLoader();
+        return new File(classLoader.getResource(file).getFile());
+    }
+
+    public static boolean bytesEqual(byte[] a, byte[] b, int length) {
+        for (int i = 0; i < length; i++) {
+            if (a[i] != b[i]) return false;
         }
         return true;
+    }
+
+    public static void wait(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+        }
     }
 }

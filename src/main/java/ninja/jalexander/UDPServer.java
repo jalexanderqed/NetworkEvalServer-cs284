@@ -5,47 +5,56 @@ import java.net.*;
 import java.util.Arrays;
 
 public class UDPServer extends Thread {
-    public void run() {
+    private static final int retryCount = 40;
 
+    public void run() {
         byte[] myByteArray = Util.loadImageFile();
         System.out.println("UDP Server Running with file of size " + myByteArray.length);
 
         int chunkSize = 60000;
         int chunkCount = (myByteArray.length / chunkSize) + 1;
-	//System.out.println("Chunk Count is: " + chunkCount);
-	byte[][] bytesChunked = new byte[chunkCount][];
-	
-	for (int i = 0; i < chunkCount - 1; i++) {
-	    bytesChunked[i] = new byte[chunkSize];
-	    bytesChunked[i] = Arrays.copyOfRange(myByteArray, i * chunkSize, (i + 1) * chunkSize);
-	    //System.out.println("Other one: " + bytesChunked[i].length);
-	}
-	//do last one
-	int lastChunkSize = myByteArray.length - ((chunkCount - 2) * chunkSize);
-	bytesChunked[chunkCount - 1] = new byte[lastChunkSize];
-	bytesChunked[chunkCount - 1] = Arrays.copyOfRange(myByteArray, (chunkCount - 1) * chunkSize, myByteArray.length);
-	//System.out.println("Last one: " + bytesChunked[chunkCount -1].length);
-	/*
+        System.out.println("Chunk Count is: " + chunkCount);
+        byte[][] bytesChunked = new byte[chunkCount][];
+
+        for (int i = 0; i < chunkCount - 1; i++) {
+            bytesChunked[i] = new byte[chunkSize];
+            bytesChunked[i] = Arrays.copyOfRange(myByteArray, i * chunkSize, (i + 1) * chunkSize);
+        }
+
+        int lastChunkSize = myByteArray.length - ((chunkCount - 2) * chunkSize);
+        bytesChunked[chunkCount - 1] = new byte[lastChunkSize];
+        bytesChunked[chunkCount - 1] = Arrays.copyOfRange(myByteArray, (chunkCount - 1) * chunkSize, myByteArray.length);
 
         try(DatagramSocket serverSocket = new DatagramSocket(9876)){
-            byte[] receiveData = new byte[1024];
-            byte[] sendData = new byte[1024];
             while (true) {
+                byte[] receiveData = new byte[64000];
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
                 serverSocket.receive(receivePacket);
-                String sentence = new String(receivePacket.getData());
+                byte[] receivePacketData = receivePacket.getData();
+                String sentence = new String(receivePacketData);
                 System.out.println("RECEIVED: " + sentence);
+                System.out.println("Size: " + receivePacket.getLength());
+
                 InetAddress IPAddress = receivePacket.getAddress();
                 int port = receivePacket.getPort();
-                String capitalizedSentence = sentence.toUpperCase();
-                sendData = capitalizedSentence.getBytes();
-                DatagramPacket sendPacket =
-                        new DatagramPacket(sendData, sendData.length, IPAddress, port);
-                serverSocket.send(sendPacket);
+
+                for(int i = 0; i < bytesChunked.length; i++) {
+                    DatagramPacket sendPacket =
+                            new DatagramPacket(bytesChunked[i], bytesChunked[i].length, IPAddress, port);
+                    serverSocket.send(sendPacket);
+                    //Util.wait(1);
+                }
+
+                for(int i = 0; i < retryCount; i++){
+                    DatagramPacket sendPacket =
+                            new DatagramPacket(receivePacketData, receivePacket.getLength(), IPAddress, port);
+                    serverSocket.send(sendPacket);
+                    if(i % 3 == 2)Util.wait(5);
+                }
             }
-        } catch (Exception e) {
+        } catch (IOException e) {
             System.err.println(e.getMessage());
             e.printStackTrace();
-	    }*/
+	    }
     }
 }

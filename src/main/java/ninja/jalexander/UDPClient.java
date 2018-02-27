@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.*;
 
 class UDPClient {
-    private static final int retryCount = 20;
+    private static final int retryCount = 1;
 
     public static void main(String[] args) {
         try(DatagramSocket clientSocket = new DatagramSocket()) {
@@ -18,17 +18,42 @@ class UDPClient {
             }
 
             boolean receiving = true;
+            int packetsReceived = 0;
+            int bytesReceived = 0;
+
+            boolean started = false;
+            long startTime = 0;
+            long endTime = 0;
+
             while (receiving) {
                 byte[] receiveData = new byte[64000];
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
                 clientSocket.receive(receivePacket);
+                if(!started){
+                    started = true;
+                    startTime = System.nanoTime();
+                }
+
+                packetsReceived++;
+                bytesReceived += receivePacket.getLength();
+
                 if (receivePacket.getLength() == sendData.length) {
                     byte[] received = receivePacket.getData();
                     if (Util.bytesEqual(received, sendData, sendData.length)) {
-                        receiving = true;
+                        receiving = false;
+                        endTime = System.nanoTime();
                     }
                 }
             }
+
+            long nanoDiff = endTime - startTime;
+            double bRate = ((double)bytesReceived) / (nanoDiff * 1e-9);
+            double pRate = ((double)packetsReceived) / (nanoDiff * 1e-9);
+
+            System.out.println("Packets Received: " + packetsReceived);
+            System.out.println("Bytes Received: " + bytesReceived);
+            System.out.println("Byte Rate: " + Math.round(bRate / 1e6) + "MB/s");
+            System.out.println("Packet Rate: " + Math.round(pRate) + "p/s");
         } catch(IOException e){
             System.err.println(e.getMessage());
             e.printStackTrace();
