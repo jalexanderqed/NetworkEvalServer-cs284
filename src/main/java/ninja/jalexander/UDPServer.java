@@ -25,7 +25,7 @@ public class UDPServer extends Thread {
         bytesChunked[chunkCount - 1] = new byte[lastChunkSize];
         bytesChunked[chunkCount - 1] = Arrays.copyOfRange(myByteArray, (chunkCount - 1) * chunkSize, myByteArray.length);
 
-        try(DatagramSocket serverSocket = new DatagramSocket(9876)){
+        try (DatagramSocket serverSocket = new DatagramSocket(9876)) {
             while (true) {
                 byte[] receiveData = new byte[64000];
                 DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
@@ -36,7 +36,7 @@ public class UDPServer extends Thread {
                 InetAddress IPAddress = receivePacket.getAddress();
                 int port = receivePacket.getPort();
 
-                for(int i = 0; i < bytesChunked.length; i++) {
+                for (int i = 0; i < bytesChunked.length; i++) {
                     Util.wait(30);
                     DatagramPacket sendPacket =
                             new DatagramPacket(bytesChunked[i], bytesChunked[i].length, IPAddress, port);
@@ -45,16 +45,16 @@ public class UDPServer extends Thread {
 
                 Util.wait(1);
 
-                for(int i = 0; i < retryCount; i++){
+                for (int i = 0; i < retryCount; i++) {
                     DatagramPacket sendPacket =
                             new DatagramPacket(receivePacketData, receivePacket.getLength(), IPAddress, port);
                     serverSocket.send(sendPacket);
-                    if(i % 3 == 2)Util.wait(i * 5);
+                    if (i % 3 == 2) Util.wait(i * 5);
                 }
             }
         } catch (IOException e) {
             System.err.println(e.getMessage());
             e.printStackTrace();
-	    }
+        }
     }
 }
