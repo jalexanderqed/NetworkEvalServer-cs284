@@ -5,7 +5,7 @@ import java.net.*;
 import java.util.Arrays;
 
 public class UDPServer extends Thread {
-    private static final int retryCount = 40;
+    private static final int retryCount = 21;
 
     public void run() {
         byte[] myByteArray = Util.loadImageFile();
@@ -49,7 +49,7 @@ public class UDPServer extends Thread {
                     DatagramPacket sendPacket =
                             new DatagramPacket(receivePacketData, receivePacket.getLength(), IPAddress, port);
                     serverSocket.send(sendPacket);
-                    if(i % 3 == 2)Util.wait(5);
+                    if(i % 3 == 2)Util.wait(i * 5);
                 }
             }
         } catch (IOException e) {
