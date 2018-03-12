@@ -10,16 +10,19 @@ public class TCPServer extends Thread {
 
         try (ServerSocket welcomeSocket = new ServerSocket(6789)) {
             while (true) {
-                Socket connectionSocket = welcomeSocket.accept();
-                System.out.println("Received TCP request");
-                BufferedOutputStream outToClient = new BufferedOutputStream(connectionSocket.getOutputStream());
+                try (Socket connectionSocket = welcomeSocket.accept()) {
+                    System.out.println("Received TCP request");
+                    BufferedOutputStream outToClient = new BufferedOutputStream(connectionSocket.getOutputStream());
 
-                if (outToClient != null) {
-                    outToClient.write(myByteArray, 0, myByteArray.length);
-                    outToClient.flush();
-                    outToClient.close();
+                    if (outToClient != null) {
+                        outToClient.write(myByteArray, 0, myByteArray.length);
+                        outToClient.flush();
+                        outToClient.close();
+                    }
+                } catch (IOException e) {
+                    System.err.println(e.getMessage());
+                    e.printStackTrace();
                 }
-                connectionSocket.close();
             }
         } catch (IOException e) {
             System.err.println(e.getMessage());
