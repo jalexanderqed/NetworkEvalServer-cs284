@@ -50,6 +50,7 @@ public class UDPServer extends Thread {
                         serverSocket.send(sendPacket);
                     }
 
+                    long start = System.currentTimeMillis();
                     Util.wait(1);
                     for (int i = 0; i < retryCount; i++) {
                         DatagramPacket sendPacket =
@@ -57,6 +58,8 @@ public class UDPServer extends Thread {
                         serverSocket.send(sendPacket);
                         Util.wait(i * 6);
                     }
+                    long end = System.currentTimeMillis();
+                    System.out.println("Finished sending retries in " + (end - start));
                 } catch (IOException e) {
                     System.err.println(e.getMessage());
                     e.printStackTrace();
