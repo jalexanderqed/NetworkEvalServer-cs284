@@ -34,11 +34,10 @@ public class UDPServer extends Thread {
                     serverSocket.receive(receivePacket);
                     byte[] receivePacketData = receivePacket.getData();
                     String waitString = new String(receivePacketData);
-                    System.out.println("Wait String size: " + waitString.trim().length() + '\n');
                     int waitTime = Integer.parseInt(waitString.trim());
 
                     System.out.println("Received UDP request");
-                    System.out.println("Wait interval is: " + waitTime);
+                    System.out.println("Wait interval is: " + waitTime + "\n");
 
                     InetAddress IPAddress = receivePacket.getAddress();
                     int port = receivePacket.getPort();
@@ -59,7 +58,6 @@ public class UDPServer extends Thread {
                         Util.wait(i * 6);
                     }
                     long end = System.currentTimeMillis();
-                    System.out.println("Finished sending retries in " + (end - start));
                 } catch (IOException e) {
                     System.err.println(e.getMessage());
                     e.printStackTrace();
