@@ -5,9 +5,10 @@ import java.net.*;
 import java.util.Arrays;
 
 public class UDPServer extends Thread {
-    private static final int retryCount = 43;
+    private static final int retryCount = 20;
 
     public void run() {
+        byte[] finishBytes = "messiii".getBytes();
         byte[] myByteArray = Util.loadImageFile();
         System.out.println("UDP Server Running with file of size " + myByteArray.length);
 
@@ -52,9 +53,9 @@ public class UDPServer extends Thread {
                     Util.wait(1);
                     for (int i = 0; i < retryCount; i++) {
                         DatagramPacket sendPacket =
-                                new DatagramPacket(receivePacketData, receivePacket.getLength(), IPAddress, port);
+                                new DatagramPacket(finishBytes, finishBytes.length, IPAddress, port);
                         serverSocket.send(sendPacket);
-                        if (i % 3 == 2) Util.wait(i * 3);
+                        Util.wait(i * 6);
                     }
                 } catch (IOException e) {
                     System.err.println(e.getMessage());
