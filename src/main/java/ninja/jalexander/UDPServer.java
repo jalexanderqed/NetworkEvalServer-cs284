@@ -32,20 +32,24 @@ public class UDPServer extends Thread {
                     DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
                     serverSocket.receive(receivePacket);
                     byte[] receivePacketData = receivePacket.getData();
+                    String waitString = new String(receivePacketData);
+                    System.out.println("Wait String size: " + waitString.trim().length() + '\n');
+                    int waitTime = Integer.parseInt(waitString.trim());
+
                     System.out.println("Received UDP request");
+                    System.out.println("Wait interval is: " + waitTime);
 
                     InetAddress IPAddress = receivePacket.getAddress();
                     int port = receivePacket.getPort();
 
                     for (int i = 0; i < bytesChunked.length; i++) {
-                        Util.wait(30);
+                        Util.wait(waitTime);
                         DatagramPacket sendPacket =
                                 new DatagramPacket(bytesChunked[i], bytesChunked[i].length, IPAddress, port);
                         serverSocket.send(sendPacket);
                     }
 
                     Util.wait(1);
-
                     for (int i = 0; i < retryCount; i++) {
                         DatagramPacket sendPacket =
                                 new DatagramPacket(receivePacketData, receivePacket.getLength(), IPAddress, port);
