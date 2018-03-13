@@ -54,7 +54,7 @@ public class UDPServer extends Thread {
                         DatagramPacket sendPacket =
                                 new DatagramPacket(receivePacketData, receivePacket.getLength(), IPAddress, port);
                         serverSocket.send(sendPacket);
-                        if (i % 5 == 2) Util.wait(i * 3);
+                        if (i % 3 == 2) Util.wait(i * 3);
                     }
                 } catch (IOException e) {
                     System.err.println(e.getMessage());
