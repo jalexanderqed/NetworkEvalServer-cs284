@@ -5,7 +5,7 @@ import java.net.*;
 import java.util.Arrays;
 
 public class UDPServer extends Thread {
-    private static final int retryCount = 21;
+    private static final int retryCount = 43;
 
     public void run() {
         byte[] myByteArray = Util.loadImageFile();
@@ -27,29 +27,34 @@ public class UDPServer extends Thread {
 
         try (DatagramSocket serverSocket = new DatagramSocket(9876)) {
             while (true) {
-                byte[] receiveData = new byte[64000];
-                DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-                serverSocket.receive(receivePacket);
-                byte[] receivePacketData = receivePacket.getData();
-                System.out.println("Received UDP request");
+                try {
+                    byte[] receiveData = new byte[64000];
+                    DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                    serverSocket.receive(receivePacket);
+                    byte[] receivePacketData = receivePacket.getData();
+                    System.out.println("Received UDP request");
 
-                InetAddress IPAddress = receivePacket.getAddress();
-                int port = receivePacket.getPort();
+                    InetAddress IPAddress = receivePacket.getAddress();
+                    int port = receivePacket.getPort();
 
-                for (int i = 0; i < bytesChunked.length; i++) {
-                    Util.wait(30);
-                    DatagramPacket sendPacket =
-                            new DatagramPacket(bytesChunked[i], bytesChunked[i].length, IPAddress, port);
-                    serverSocket.send(sendPacket);
-                }
+                    for (int i = 0; i < bytesChunked.length; i++) {
+                        Util.wait(30);
+                        DatagramPacket sendPacket =
+                                new DatagramPacket(bytesChunked[i], bytesChunked[i].length, IPAddress, port);
+                        serverSocket.send(sendPacket);
+                    }
 
-                Util.wait(1);
+                    Util.wait(1);
 
-                for (int i = 0; i < retryCount; i++) {
-                    DatagramPacket sendPacket =
-                            new DatagramPacket(receivePacketData, receivePacket.getLength(), IPAddress, port);
-                    serverSocket.send(sendPacket);
-                    if (i % 3 == 2) Util.wait(i * 5);
+                    for (int i = 0; i < retryCount; i++) {
+                        DatagramPacket sendPacket =
+                                new DatagramPacket(receivePacketData, receivePacket.getLength(), IPAddress, port);
+                        serverSocket.send(sendPacket);
+                        if (i % 5 == 2) Util.wait(i * 3);
+                    }
+                } catch (IOException e) {
+                    System.err.println(e.getMessage());
+                    e.printStackTrace();
                 }
             }
         } catch (IOException e) {
