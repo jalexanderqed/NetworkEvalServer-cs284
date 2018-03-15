@@ -10,7 +10,7 @@ class UDPClient {
         runDiagnostic(true);
     }
 
-    private final static String serverIP = "localhost";
+    private final static String serverIP = "13.57.60.32";
     private final static int serverPort = 9876;
     private static final int retryCount = 1;
 
